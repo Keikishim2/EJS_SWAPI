@@ -1,0 +1,31 @@
+body{
+    background-color: darkorange;
+    text-align: center;
+}
+#info{
+    overflow: scroll;
+    margin: 20px auto;
+    border: 2px solid black;
+    border-radius: 2px;
+    width: 400px;
+    height: 300px;
+    padding: 20px;
+    background-color: rgb(230, 255, 255);
+}
+#loading{
+    width: 20px;
+}
+#white_block{
+    height: 1000px;
+}
+
+#height{
+    height: 28px;
+}
+.pagers{
+    width: 400px;
+    margin: auto;
+}
+.space{
+    margin-bottom: 20px; 
+}

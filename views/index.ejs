@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>Document</title>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+    <link rel='stylesheet' type='text/css' href='css/index.css'>
+    <script>
+        $(document).ready(function () {
+
+            function display(info) {
+                $('#all').removeAttr("hidden")
+
+                if (info.next != null) {
+                    $('#next').removeAttr("hidden")
+                } else {
+                    $('#next').attr("hidden", "hidden")
+                }
+
+                if (info.previous != null) {
+                    $('#prev').removeAttr("hidden")
+                } else {
+                    $('#prev').attr("hidden", "hidden")
+                }
+                let build = ""
+                for (let i = 0; i < info.results.length; i++) {
+                    build += "<p>" + info.results[i].name + "</p>"
+                }
+                $('#content').html(build)
+                setTimeout(function(){
+                    $('#info').scroll(bottom)
+                }, 500);
+            }
+            $('#people').click(function () {
+                $.get('/people/0', function (data) {
+                    display(data)
+                }, 'json');
+            });
+            $('#planets').click(function () {
+                $.get('/planets/0', function (data) {
+                    display(data)
+                }, 'json');
+            });
+            $('#next').click(function () {
+                $.get('/next', function (data) {
+                    display(data)
+                }, 'json');
+            });
+            $('#prev').click(function () {
+                $.get('/prev', function (data) {
+                    display(data)
+                }, 'json');
+            });
+            function allNexts() {
+
+                $.get('/next', function (data) {
+                    let build = ""
+                    for (let i = 0; i < data.results.length; i++) {
+                        build += "<p>" + data.results[i].name + "</p>"
+                    }
+                    $('#content').append(build)
+                    if (data.next == null) {
+                        $('#loading').attr("hidden", "hidden")
+                        return false
+                    } else {
+                        allNexts()
+                    }
+                }, 'json');
+            }
+            $('#all').click(function () {
+                $( "#info").unbind( "scroll" );
+                $('#loading').removeAttr("hidden")
+                $.get('/all', function (data) {
+                    let build = ""
+                    for (let i = 0; i < data.results.length; i++) {
+                        build += "<p>" + data.results[i].name + "</p>"
+                    }
+                    $('#next').attr("hidden", "hidden")
+                    $('#prev').attr("hidden", "hidden")
+                    $('#content').html(build)
+                    allNexts()
+                }, 'json');
+            });
+            function bottom(){
+                console.log("*")
+                if ($("#info").scrollTop() + $("#info").height() >= $("#info").children().height() + 15) {
+                    console.log("data -")
+                    $( "#info").unbind( "scroll" );
+                    add()
+                }
+            }
+            function add(){
+                $('.white_block').removeAttr("hidden")
+                $('#loading').removeAttr("hidden")
+                $.get('/next', function (data) {               
+                    let build = ""
+                    for (let i = 0; i < data.results.length; i++) {
+                        build += "<p>" + data.results[i].name + "</p>"
+                    }
+                    console.log(data)
+                    $('#content').append(build)
+                    $('#loading').attr("hidden", "hidden")
+                    $('#info').scroll(bottom);
+                }, 'json');
+            }
+        })
+    </script>
+</head>
+<body>
+    <h1>Star Wars Wiki Wiki Eh Eh!</h1>
+    <hr>
+    <h3 class="space">What topic do you want information about?</h3>
+    <div class="row pagers">
+            <button id="people" class="btn btn-primary">People</button>
+            <button id="planets" class="btn btn-primary">Planets</button>
+    </div>
+    <div id="info">
+        <img id="loading" src="images/loading.gif" alt="Loading" hidden>
+    </div>
+    <div class="row pagers">
+            <button id="prev" class="btn btn-warning prev" hidden>Previous 10</button>
+            <button id="all" class="btn btn-warning all" hidden>Get all</button>
+            <button id="next" class="btn btn-warning next" hidden>Next 10</button>
+    </div>
+</body>
+</html>
